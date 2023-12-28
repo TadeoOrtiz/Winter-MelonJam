@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3 uid="uid://dd3a3dh7kng6k"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_lunu6"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_q27bp"]
+radius = 20.0
+
+[node name="Player" type="CharacterBody2D"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_lunu6")
+
+[node name="IntereactArea" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="IntereactArea"]
+shape = SubResource("CircleShape2D_q27bp")
