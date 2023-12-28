@@ -1,3 +1,15 @@
-[gd_scene format=3 uid="uid://c8ym1v3kxl47r"]
+[gd_scene load_steps=3 format=3 uid="uid://c8ym1v3kxl47r"]
+
+[ext_resource type="PackedScene" uid="uid://dd3a3dh7kng6k" path="res://nodes/player.tscn" id="1_pnwix"]
+[ext_resource type="PackedScene" uid="uid://do0b50xrhj6tx" path="res://nodes/human.tscn" id="2_5ybj2"]
 
 [node name="TestRoom" type="Node2D"]
+
+[node name="Player" parent="." instance=ExtResource("1_pnwix")]
+position = Vector2(329, 231)
+
+[node name="Human" parent="." instance=ExtResource("2_5ybj2")]
+position = Vector2(242, 193)
+
+[node name="Human2" parent="." instance=ExtResource("2_5ybj2")]
+position = Vector2(292, 163)

@@ -1,16 +1,42 @@
-[gd_scene load_steps=3 format=3 uid="uid://dd3a3dh7kng6k"]
+[gd_scene load_steps=5 format=3 uid="uid://dd3a3dh7kng6k"]
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_lunu6"]
+[ext_resource type="Script" path="res://scrips/player.gd" id="1_gvht2"]
+[ext_resource type="Texture2D" uid="uid://cns4aoluhlxkb" path="res://textures/player.png" id="2_ctw4a"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_g0gg6"]
+radius = 3.0
+height = 12.0
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_q27bp"]
-radius = 20.0
+radius = 36.0
 
-[node name="Player" type="CharacterBody2D"]
+[node name="Player" type="CharacterBody2D" groups=["Player"]]
+script = ExtResource("1_gvht2")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(2, -7)
+texture = ExtResource("2_ctw4a")
+hframes = 5
+vframes = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-shape = SubResource("CircleShape2D_lunu6")
+rotation = 1.5708
+shape = SubResource("CapsuleShape2D_g0gg6")
 
 [node name="IntereactArea" type="Area2D" parent="."]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="IntereactArea"]
 shape = SubResource("CircleShape2D_q27bp")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+zoom = Vector2(2, 2)
+position_smoothing_enabled = true
+
+[node name="Label" type="Label" parent="."]
+offset_left = -19.0
+offset_top = -45.0
+offset_right = 21.0
+offset_bottom = -22.0
+
+[connection signal="area_entered" from="IntereactArea" to="." method="_on_intereact_area_area_entered"]
+[connection signal="area_exited" from="IntereactArea" to="." method="_on_intereact_area_area_exited"]
