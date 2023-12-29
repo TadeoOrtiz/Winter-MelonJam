@@ -1,20 +1,150 @@
-[gd_scene load_steps=4 format=3 uid="uid://do0b50xrhj6tx"]
+[gd_scene load_steps=15 format=3 uid="uid://do0b50xrhj6tx"]
 
-[ext_resource type="Script" path="res://scrips/charmeable.gd" id="1_tlew8"]
+[ext_resource type="Script" path="res://scripts/npc/human.gd" id="1_tlew8"]
+[ext_resource type="Script" path="res://scripts/classes/state_machine.gd" id="2_0lasp"]
 [ext_resource type="Texture2D" uid="uid://4v4g23esoih7" path="res://textures/human.png" id="2_enfxe"]
+[ext_resource type="Script" path="res://scripts/npc/generic_states/idle.gd" id="3_itxsm"]
+[ext_resource type="Script" path="res://scripts/npc/generic_states/wander.gd" id="3_t8jcw"]
+[ext_resource type="Script" path="res://scripts/npc/generic_states/charm.gd" id="4_3mbrb"]
+[ext_resource type="Script" path="res://scripts/npc/generic_states/charm_idle.gd" id="6_ikikp"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_s1wtk"]
-radius = 10.0499
+radius = 3.0
 
-[node name="Human" type="Area2D" groups=["Charmeable"]]
+[sub_resource type="Animation" id="Animation_brxns"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [15]
+}
+
+[sub_resource type="Animation" id="Animation_if1dq"]
+resource_name = "charm_idle"
+length = 0.40001
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 1,
+"values": [5, 6, 7, 8]
+}
+
+[sub_resource type="Animation" id="Animation_3oqof"]
+resource_name = "charm_walk"
+length = 0.40001
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 1,
+"values": [0, 1, 2, 3]
+}
+
+[sub_resource type="Animation" id="Animation_j6rwd"]
+resource_name = "idle"
+length = 0.40001
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 1,
+"values": [15, 16, 17, 18]
+}
+
+[sub_resource type="Animation" id="Animation_cli4n"]
+resource_name = "walk"
+length = 0.40001
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 1,
+"values": [10, 11, 12, 13]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_p0utb"]
+_data = {
+"RESET": SubResource("Animation_brxns"),
+"charm_idle": SubResource("Animation_if1dq"),
+"charm_walk": SubResource("Animation_3oqof"),
+"idle": SubResource("Animation_j6rwd"),
+"walk": SubResource("Animation_cli4n")
+}
+
+[node name="Human" type="CharacterBody2D" groups=["Charmeable"]]
+collision_layer = 4
 script = ExtResource("1_tlew8")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(0, -6)
-shape = SubResource("CircleShape2D_s1wtk")
+[node name="StateMachine" type="Node" parent="." node_paths=PackedStringArray("inital_state", "animation_player", "target")]
+script = ExtResource("2_0lasp")
+inital_state = NodePath("Wander")
+animation_player = NodePath("../AnimationPlayer")
+target = NodePath("..")
+
+[node name="Idle" type="Node" parent="StateMachine"]
+script = ExtResource("3_itxsm")
+
+[node name="Wander" type="Node" parent="StateMachine"]
+script = ExtResource("3_t8jcw")
+
+[node name="Charm" type="Node" parent="StateMachine"]
+script = ExtResource("4_3mbrb")
+
+[node name="CharmIdle" type="Node" parent="StateMachine"]
+script = ExtResource("6_ikikp")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-position = Vector2(2, -6)
+unique_name_in_owner = true
+position = Vector2(0, -9)
 texture = ExtResource("2_enfxe")
 hframes = 5
-vframes = 2
+vframes = 4
+frame = 15
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, -3)
+shape = SubResource("CircleShape2D_s1wtk")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_p0utb")
+}
+
+[node name="Label" type="Label" parent="."]
+unique_name_in_owner = true
+offset_left = -19.0
+offset_top = -43.0
+offset_right = 21.0
+offset_bottom = -20.0

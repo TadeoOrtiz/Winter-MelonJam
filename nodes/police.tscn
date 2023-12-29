@@ -1,0 +1,135 @@
+[gd_scene load_steps=15 format=3 uid="uid://t58cr72nfll3"]
+
+[ext_resource type="Texture2D" uid="uid://djgon7kqcxrh2" path="res://textures/police.png" id="1_5aqch"]
+[ext_resource type="Script" path="res://scripts/npc/police.gd" id="1_ch2un"]
+[ext_resource type="Script" path="res://scripts/classes/state_machine.gd" id="2_e3lis"]
+[ext_resource type="Script" path="res://scripts/npc/generic_states/idle.gd" id="3_jhqdi"]
+[ext_resource type="Script" path="res://scripts/npc/generic_states/wander.gd" id="4_8o8u6"]
+[ext_resource type="Script" path="res://scripts/npc/police_states/chase.gd" id="5_w1whi"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_2556s"]
+radius = 3.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_es5a2"]
+radius = 40.1123
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_jjmjy"]
+radius = 99.0808
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_jl4p2"]
+radius = 163.11
+
+[sub_resource type="Animation" id="Animation_2s4o4"]
+resource_name = "idle"
+length = 0.40001
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 1,
+"values": [5, 5, 6, 7]
+}
+
+[sub_resource type="Animation" id="Animation_da1sg"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [5]
+}
+
+[sub_resource type="Animation" id="Animation_2i55w"]
+resource_name = "walk"
+length = 0.40001
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 1,
+"values": [0, 1, 2, 3]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_qvvwh"]
+_data = {
+"RESET": SubResource("Animation_da1sg"),
+"idle": SubResource("Animation_2s4o4"),
+"walk": SubResource("Animation_2i55w")
+}
+
+[node name="Police" type="CharacterBody2D"]
+collision_layer = 4
+script = ExtResource("1_ch2un")
+
+[node name="StateMachine" type="Node" parent="." node_paths=PackedStringArray("inital_state", "animation_player", "target")]
+script = ExtResource("2_e3lis")
+inital_state = NodePath("Idle")
+animation_player = NodePath("../AnimationPlayer")
+target = NodePath("..")
+
+[node name="Idle" type="Node" parent="StateMachine"]
+script = ExtResource("3_jhqdi")
+
+[node name="Wander" type="Node" parent="StateMachine"]
+script = ExtResource("4_8o8u6")
+
+[node name="Shot" type="Node" parent="StateMachine"]
+
+[node name="Capture" type="Node" parent="StateMachine"]
+
+[node name="Chase" type="Node" parent="StateMachine"]
+script = ExtResource("5_w1whi")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, -3)
+shape = SubResource("CircleShape2D_2556s")
+
+[node name="Areas" type="Node2D" parent="."]
+position = Vector2(0, -8)
+
+[node name="CaptureArea" type="Area2D" parent="Areas"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Areas/CaptureArea"]
+shape = SubResource("CircleShape2D_es5a2")
+
+[node name="ShotArea" type="Area2D" parent="Areas"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Areas/ShotArea"]
+shape = SubResource("CircleShape2D_jjmjy")
+
+[node name="VisionArea" type="Area2D" parent="Areas"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Areas/VisionArea"]
+shape = SubResource("CircleShape2D_jl4p2")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(0, -9)
+texture = ExtResource("1_5aqch")
+hframes = 5
+vframes = 2
+frame = 5
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_qvvwh")
+}
+
+[connection signal="area_entered" from="Areas/VisionArea" to="." method="_on_vision_entered"]
