@@ -12,5 +12,5 @@ func state_process(delta):
 
 func state_input(event : InputEvent):
 	if event.is_action_pressed("dash"):
-		if dash_component.can_dash:
+		if dash_component.can_dash and target.energy >= dash_component.energy_consume:
 			transitioned.emit(self, "Dash", {})

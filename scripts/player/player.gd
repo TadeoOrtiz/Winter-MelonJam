@@ -1,8 +1,13 @@
 class_name Player
 extends Entity
 
+signal wasted
+
+
 @onready var dash_component = %DashComponent as DashComponent
 @onready var energy_cooldown = $EnergyCooldown as Timer
+
+
 
 # Variables de atributos
 var level := 1
@@ -55,7 +60,7 @@ func _process(delta):
 	
 	if Input.is_action_just_pressed("charm"):
 		if target != null:
-			if not target.charmed:
+			if not target.charmed and not target.death:
 				if energy >= target.energy_consume: 
 					target.charmed = true
 					target.charm_target = self
@@ -66,8 +71,10 @@ func _process(delta):
 			else:
 				if target.ready_to_consume:
 					points += 1
+					target.death = true
 					charmeable_nodes.erase(target)
-					target.queue_free()
+			
+			$StateMachine.current_state.transitioned.emit($StateMachine.current_state, "Charm", {})
 	
 	_update_label()
 
@@ -76,12 +83,8 @@ func _update_label():
 	
 	var info := {
 		"Energy" : energy,
-		"Level": level,
 		"Poinst": points,
-		"Dashing": %DashComponent.is_dashing(),
-		"Dash CD": %DashComponent.cooldown_timer.time_left,
-		"Current State": $StateMachine.current_state,
-		"Target": target
+		"Level": level
 	}
 	
 	for i in info:
@@ -99,3 +102,6 @@ func _on_intereact_area_body_exited(body):
 			target = charmeable_nodes[0]
 		else:
 			target = null
+
+func death():
+	$StateMachine.current_state.transitioned.emit($StateMachine.current_state, "Wasted", {})

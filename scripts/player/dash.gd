@@ -3,11 +3,9 @@ extends State
 @onready var dash_component = %DashComponent as DashComponent
 
 func enter(args):
-	if target.energy < dash_component.energy_consume:
-		transitioned.emit(self, "Idle", {})
-	else:
-		dash_component.start_dash()
-		target.energy -= dash_component.energy_consume
+	
+	dash_component.start_dash()
+	target.energy -= dash_component.energy_consume
 	
 
 func state_physics_process(_delta : float) -> void:

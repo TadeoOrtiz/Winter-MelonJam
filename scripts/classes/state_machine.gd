@@ -10,12 +10,11 @@ var states : Dictionary
 var current_state : State
 
 func _ready():
-	for child in get_children():
+	for child : State in get_children():
 		child.target = target
 		child.anim = animation_player
 		child.transitioned.connect(change_state)
-		
-		states[child.name.to_upper()] = child
+		states[child.name] = child
 	
 	current_state = inital_state
 	current_state.enter({})
@@ -36,8 +35,8 @@ func change_state(state : State, new_state_name : String, args : Dictionary):
 	if state != current_state:
 		return
 	
-	var new_state : State = states[new_state_name.to_upper()]
-	if !new_state:
+	var new_state : State = states[new_state_name]
+	if not new_state:
 		return
 	
 	current_state.exit()

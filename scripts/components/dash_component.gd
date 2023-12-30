@@ -35,9 +35,9 @@ func _ready():
 
 func start_dash():
 	if cooldown_timer.time_left <= 0:
+		can_dash = false
 		dash_timer.start()
 		cooldown_timer.start()
-		can_dash = true
 
 func is_dashing() -> bool:
 	return dash_timer.time_left > 0

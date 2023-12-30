@@ -9,6 +9,7 @@ var charmed : bool
 var charm_pos : Vector2
 var charm_target : Entity
 
+var room : RoomManager
 
 
 
