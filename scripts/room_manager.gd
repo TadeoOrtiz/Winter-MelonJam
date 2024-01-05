@@ -46,6 +46,8 @@ func wasted():
 	tween.tween_property(camera, "zoom", Vector2(10,10), 5)
 	tween.parallel().tween_property(label, "modulate", Color8(255, 255, 255, 255), 2.5)
 	tween.parallel().tween_property(color_rect, "color", Color8(0, 0, 0, 128), 2.5)
+	await  tween.finished
+	get_tree().reload_current_scene()
 	#camera.scale
 
 func _unhandled_key_input(event : InputEvent):
